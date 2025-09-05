@@ -119,6 +119,7 @@ def get_region(x: int, y: int) -> list[Coordinate]:
     RIGHT = 1
 
     # where is x?
+    # could be refactored using `x % 3` but I'll keep it as is for legibility
     if x == 1 or x == 4 or x == 7:
         pos[0] = LEFT
     elif x == 2 or x == 5 or x == 8:
@@ -128,11 +129,11 @@ def get_region(x: int, y: int) -> list[Coordinate]:
 
     # where is y?
     if y == 1 or y == 4 or y == 7:
-        pos[1] = LEFT
+        pos[1] = TOP
     elif y == 2 or y == 5 or y == 8:
         pos[1] = CENTRE
     else:
-        pos[1] = RIGHT
+        pos[1] = BOTTOM
 
     # Which values do we need to consider?
     if pos[0] == LEFT:
