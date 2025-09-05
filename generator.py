@@ -145,7 +145,7 @@ def get_region(x: int, y: int) -> list[Coordinate]:
 
     if pos[1] == TOP:
         ys = [y, y + 1, y + 2]
-    elif pos[0] == CENTRE:
+    elif pos[1] == CENTRE:
         ys = [y - 1, y, y + 1]
     else:
         ys = [y, y - 1, y - 2]
