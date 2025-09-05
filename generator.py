@@ -1,4 +1,5 @@
 from pprint import pp
+from typing import Optional
 
 type Coordinate = tuple[int, int]
 
@@ -37,6 +38,12 @@ class Field:
             if self.possible_vals[i]:
                 result.append(i + 1)
         return result
+
+    def num_of_possible_vals(self) -> int:
+        """
+        Returns the number of possible values for this field.
+        """
+        return len([x for x in self.possible_vals if x])
 
     def __str__(self) -> str:
         return str(self.possible_vals)
@@ -87,34 +94,88 @@ class Game:
         self.grid[y][x].set(val)
 
 
-def get_region(self, x: int, y: int) -> list[Coordinate]:
+def get_region(x: int, y: int) -> list[Coordinate]:
     """
     Returns a list of coordinates for all 8 fields in the same region
     as the field at coordinate (x,y).
     """
-    result: list[Coordinate] = []
-    # todo
+
+    result: list[tuple[int, int]] = []
+
+    # the grid is divided into 9 regions. To determine
+    # all the other fields in the same region, we must
+    # first determine where we must walk on the grid.
+    #
+    # There are three possible cases for both x and y:
+    # each of them can be either left, right or centre
+    # of their region. Let's save that as a "tuple" (not an actual
+    # tuple because those are immutable):
+    pos: list[Optional[int]] = [None, None]
+
+    TOP = 0
+    BOTTOM = 1
+    CENTRE = 2
+    LEFT = 0
+    RIGHT = 1
+
+    # where is x?
+    if x == 1 or x == 4 or x == 7:
+        pos[0] = LEFT
+    elif x == 2 or x == 5 or x == 8:
+        pos[0] = CENTRE
+    else:
+        pos[0] = RIGHT
+
+    # where is y?
+    if y == 1 or y == 4 or y == 7:
+        pos[1] = LEFT
+    elif y == 2 or y == 5 or y == 8:
+        pos[1] = CENTRE
+    else:
+        pos[1] = RIGHT
+
+    # now let's walk
+    if pos[0] == LEFT:
+        if pos[1] == TOP:
+            result = [(xn, yn) for xn in [x, x + 1, x + 2] for yn in [y, y - 1, y - 2]]
+        elif pos[1] == CENTRE:
+            result = [(xn, yn) for xn in [x, x + 1, x + 2] for yn in [y - 1, y, y + 1]]
+        elif pos[1] == BOTTOM:
+            result = [(xn, yn) for xn in [x, x + 1, x + 2] for yn in [y, y + 1, y + 2]]
+    elif pos[0] == RIGHT:
+        if pos[1] == TOP:
+            result = [(xn, yn) for xn in [x, x - 1, x - 2] for yn in [y, y - 1, y - 2]]
+        elif pos[1] == CENTRE:
+            result = [(xn, yn) for xn in [x, x - 1, x - 2] for yn in [y - 1, y, y + 1]]
+        elif pos[1] == BOTTOM:
+            result = [(xn, yn) for xn in [x, x - 1, x - 2] for yn in [y, y + 1, y + 2]]
+    elif pos[0] == CENTRE:
+        if pos[1] == TOP:
+            result = [(xn, yn) for xn in [x - 1, x, x + 1] for yn in [y, y - 1, y - 2]]
+        elif pos[1] == CENTRE:
+            result = [(xn, yn) for xn in [x - 1, x, x + 1] for yn in [y - 1, y, y + 1]]
+        elif pos[1] == BOTTOM:
+            result = [(xn, yn) for xn in [x - 1, x, x + 1] for yn in [y, y + 1, y + 2]]
+
+    result.remove((x, y))
+
     return result
 
 
-def get_row(self, x: int, y: int) -> list[Coordinate]:
+def get_row(x: int, y: int) -> list[Coordinate]:
     """
     Returns a list of coordinates for all 8 fields in the same row
     as the field at coordinate (x,y).
     """
-    result: list[Coordinate] = []
-    # todo
-    return result
+    return [(xn, y) for xn in range(1, 10) if xn != x]
 
 
-def get_column(self, x: int, y: int) -> list[Coordinate]:
+def get_column(x: int, y: int) -> list[Coordinate]:
     """
     Returns a list of coordinates for all 8 fields in the same column
     as the field at coordinate (x,y).
     """
-    result: list[Coordinate] = []
-    # todo
-    return result
+    return [(x, yn) for yn in range(1, 10) if yn != y]
 
 
 if __name__ == "__main__":
