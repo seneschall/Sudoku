@@ -134,28 +134,24 @@ def get_region(x: int, y: int) -> list[Coordinate]:
     else:
         pos[1] = RIGHT
 
-    # now let's walk
+    # Which values do we need to consider?
     if pos[0] == LEFT:
-        if pos[1] == TOP:
-            result = [(xn, yn) for xn in [x, x + 1, x + 2] for yn in [y, y - 1, y - 2]]
-        elif pos[1] == CENTRE:
-            result = [(xn, yn) for xn in [x, x + 1, x + 2] for yn in [y - 1, y, y + 1]]
-        elif pos[1] == BOTTOM:
-            result = [(xn, yn) for xn in [x, x + 1, x + 2] for yn in [y, y + 1, y + 2]]
-    elif pos[0] == RIGHT:
-        if pos[1] == TOP:
-            result = [(xn, yn) for xn in [x, x - 1, x - 2] for yn in [y, y - 1, y - 2]]
-        elif pos[1] == CENTRE:
-            result = [(xn, yn) for xn in [x, x - 1, x - 2] for yn in [y - 1, y, y + 1]]
-        elif pos[1] == BOTTOM:
-            result = [(xn, yn) for xn in [x, x - 1, x - 2] for yn in [y, y + 1, y + 2]]
+        xs = [x, x + 1, x + 2]
     elif pos[0] == CENTRE:
-        if pos[1] == TOP:
-            result = [(xn, yn) for xn in [x - 1, x, x + 1] for yn in [y, y - 1, y - 2]]
-        elif pos[1] == CENTRE:
-            result = [(xn, yn) for xn in [x - 1, x, x + 1] for yn in [y - 1, y, y + 1]]
-        elif pos[1] == BOTTOM:
-            result = [(xn, yn) for xn in [x - 1, x, x + 1] for yn in [y, y + 1, y + 2]]
+        xs = [x - 1, x, x + 1]
+    else:
+        xs = [x, x - 1, x - 2]
+
+    if pos[1] == TOP:
+        ys = [y, y + 1, y + 2]
+    elif pos[0] == CENTRE:
+        ys = [y - 1, y, y + 1]
+    else:
+        ys = [y, y - 1, y - 2]
+
+    # Create list of all 9 permutations
+    # i.e. all values in the region
+    result = [(xn, yn) for xn in xs for yn in ys]
 
     result.remove((x, y))
 
