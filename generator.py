@@ -88,8 +88,8 @@ class Game:
         """
         Sets the field at the xy-coordinate to `val`.
         The game board is treated as a 9x9-grid with x- and y-values going
-        from 0 to 9 where (0,0) is in the upper left corner and
-        (9,9) is in the lower right corner.
+        from 0 to 8 where (0,0) is in the upper left corner and
+        (8,8) is in the lower right corner.
         """
         self.grid[y][x].set(val)
 
@@ -98,6 +98,9 @@ def get_region(x: int, y: int) -> list[Coordinate]:
     """
     Returns a list of coordinates for all 8 fields in the same region
     as the field at coordinate (x,y).
+    The game board is treated as a 9x9-grid with x- and y-values going
+    from 0 to 8 where (0,0) is in the upper left corner and
+    (8,8) is in the lower right corner.
     """
 
     result: list[tuple[int, int]] = []
@@ -120,17 +123,17 @@ def get_region(x: int, y: int) -> list[Coordinate]:
 
     # where is x?
     # could be refactored using `x % 3` but I'll keep it as is for legibility
-    if x == 1 or x == 4 or x == 7:
+    if x == 0 or x == 3 or x == 6:
         pos[0] = LEFT
-    elif x == 2 or x == 5 or x == 8:
+    elif x == 1 or x == 4 or x == 7:
         pos[0] = CENTRE
     else:
         pos[0] = RIGHT
 
     # where is y?
-    if y == 1 or y == 4 or y == 7:
+    if y == 0 or y == 3 or y == 6:
         pos[1] = TOP
-    elif y == 2 or y == 5 or y == 8:
+    elif y == 1 or y == 4 or y == 7:
         pos[1] = CENTRE
     else:
         pos[1] = BOTTOM
@@ -163,16 +166,22 @@ def get_row(x: int, y: int) -> list[Coordinate]:
     """
     Returns a list of coordinates for all 8 fields in the same row
     as the field at coordinate (x,y).
+    The game board is treated as a 9x9-grid with x- and y-values going
+    from 0 to 8 where (0,0) is in the upper left corner and
+    (8,8) is in the lower right corner.
     """
-    return [(xn, y) for xn in range(1, 10) if xn != x]
+    return [(xn, y) for xn in range(9) if xn != x]
 
 
 def get_column(x: int, y: int) -> list[Coordinate]:
     """
     Returns a list of coordinates for all 8 fields in the same column
     as the field at coordinate (x,y).
+    The game board is treated as a 9x9-grid with x- and y-values going
+    from 0 to 8 where (0,0) is in the upper left corner and
+    (8,8) is in the lower right corner.
     """
-    return [(x, yn) for yn in range(1, 10) if yn != y]
+    return [(x, yn) for yn in range(9) if yn != y]
 
 
 if __name__ == "__main__":
