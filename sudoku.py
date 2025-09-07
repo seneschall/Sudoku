@@ -45,30 +45,32 @@ def is_in_region_of(grid: GameGrid, x: int, y: int, val: int) -> bool:
     return False
 
 
-def possible_solution(grid: GameGrid, x: int, y: int, val: int) -> bool:
+def is_possible_solution(grid: GameGrid, x: int, y: int, val: int) -> bool:
     """
     Would it violate the rules to place val in the cell at (x,y)?
     """
     if (
-        is_in_row_of(grid, y, val)
-        or is_in_column_of(grid, x, val)
-        or is_in_region_of(grid, x, y, val)
-    ):
-        return False
+        not is_in_row_of(grid, y, val)
+        and not is_in_column_of(grid, x, val)
+        and not is_in_region_of(grid, x, y, val)
+    ):  # using `and not` so that cases get tested lazily
+        return True
 
-    return True
+    return False
 
 
-def simple_solver(grid: GameGrid) -> None:
+def simple_solver(grid: GameGrid) -> bool:
     for y in range(9):
         for x in range(9):
             if grid[y][x] == 0:
                 for v in range(1, 10):
-                    if possible_solution(grid, x, y, v):
+                    if is_possible_solution(grid, x, y, v):
                         grid[y][x] = v
-                    simple_solver(grid)
-                    return
-    return
+                        if simple_solver(grid):
+                            return True
+                        grid[y][x] = 0
+                return False
+    return True
 
 
 def remove_vals(grid: GameGrid, count: int) -> None:
@@ -79,16 +81,37 @@ def remove_vals(grid: GameGrid, count: int) -> None:
         x, y = gen_coord()
         if grid[y][x] == 0:  # if value has already been removed, try again
             continue
-        val: int = randint(1, 9)
-        grid[y][x] = val
+        grid[y][x] = 0
         count -= 1
+
+
+def randomly_fill_region(grid: GameGrid, x, y) -> None:
+    """
+    (x,y) is the coordinate of the field in the upper-left corner of the region.
+    """
+    xn: int = x + 2
+    yn: int = y + 2
+    while y <= yn:
+        while x <= xn:
+            val = randint(1, 9)
+            if not is_in_region_of(grid, x, y, val):
+                grid[y][x] = val
+                x += 1
+        x -= 3
+        y += 1
+
+
+def randomly_fill_diagonal(grid: GameGrid) -> None:
+    randomly_fill_region(grid, 0, 0)
+    randomly_fill_region(grid, 3, 3)
+    randomly_fill_region(grid, 6, 6)
 
 
 def make_game(clue_count: int) -> GameGrid:
     """
     Makes a valid sudoku grid with the given number of clues.
     """
-    grid: list[list[int]] = [
+    game: list[list[int]] = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -99,14 +122,15 @@ def make_game(clue_count: int) -> GameGrid:
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    game: GameGrid = simple_solver(grid)
+    randomly_fill_diagonal(game)
+    simple_solver(game)
     remove_count: int = (9 * 9) - clue_count
     remove_vals(game, remove_count)
     return game
 
 
 if __name__ == "__main__":
-    grid: list[list[int]] = [
+    game: list[list[int]] = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -118,5 +142,7 @@ if __name__ == "__main__":
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
-    game = simple_solver(grid)
+    # randomly_fill_diagonal(game)
+    # pp(game)
+    game = make_game(20)
     pp(game)

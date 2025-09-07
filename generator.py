@@ -9,7 +9,7 @@ def gen_game() -> Game:
     return result
 
 
-def solve_naive(game: Game) -> None:
+def solve_naive(game: Game) -> bool:
     for y in range(9):
         for x in range(9):
             if game.get(x, y).is_empty():
@@ -17,7 +17,8 @@ def solve_naive(game: Game) -> None:
                 for val in range(1, 10):
                     if game.get(x, y).is_possible(val):
                         game.set_and_apply_rules(x, y, val)
-                        solve_naive(game)
+                        if solve_naive(game):
+                            return True
                         game.reset_field(x, y)
-                return
-    return
+                return False
+    return True

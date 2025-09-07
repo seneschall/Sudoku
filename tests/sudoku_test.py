@@ -1,5 +1,29 @@
 # from sudoku import simple_solver
-from sudoku import is_in_column_of, is_in_region_of, is_in_row_of
+from sudoku import (
+    is_in_column_of,
+    is_in_region_of,
+    is_in_row_of,
+    make_game,
+    possible_solution,
+)
+
+
+def test_possible_solution() -> None:
+    grid: list[list[int]] = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 4, 0, 0, 0, 0, 0, 0, 0],
+        [5, 0, 0, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 9, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 8, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+    assert possible_solution(grid, 0, 1, 4) is False
+    assert possible_solution(grid, 0, 1, 5) is False
+    assert possible_solution(grid, 0, 1, 1) is True
+    assert possible_solution(grid, 1, 3, 5) is True
 
 
 def test_is_in_region_of() -> None:
@@ -59,6 +83,24 @@ def test_is_in_column_of() -> None:
     assert is_in_column_of(grid, 3, 2) is True
     assert is_in_column_of(grid, 8, 3) is False
     assert is_in_column_of(grid, 2, 5) is False
+
+
+def test_make_game() -> None:
+    def count_zeros(game: list[list[int]]) -> int:
+        count: int = 0
+        for row in game:
+            for val in row:
+                if val == 0:
+                    count += 1
+        return count
+
+    TOTAL_COUNT = 81
+    game = make_game(18)
+    assert count_zeros(game) == TOTAL_COUNT - 18
+    game = make_game(80)
+    assert count_zeros(game) == TOTAL_COUNT - 80
+    game = make_game(0)
+    assert count_zeros(game) == TOTAL_COUNT
 
 
 # def test_simple_solver() -> None:
