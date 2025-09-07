@@ -5,26 +5,75 @@ from helpers import gen_coord
 type GameGrid = list[list[int]]
 
 
-def is_in_row_of(x: int, y: int, val: int) -> bool:
-    pass
+def is_in_row_of(grid: GameGrid, y: int, val: int) -> bool:
+    for i in range(9):
+        if grid[y][i] == val:
+            return True
+    return False
 
 
-def is_in_column_of(x: int, y: int, val: int) -> bool:
-    pass
+def is_in_column_of(grid: GameGrid, x: int, val: int) -> bool:
+    for i in range(9):
+        if grid[i][x] == val:
+            return True
+    return False
 
 
-def is_in_region_of(x: int, y: int, val: int) -> bool:
-    pass
+def is_in_region_of(grid: GameGrid, x: int, y: int, val: int) -> bool:
+    pos: list[int] = [-1, -1]
+    TOP = 0
+    BOTTOM = 1
+    CENTRE = 2
+    LEFT = 0
+    RIGHT = 1
+
+    # where in the region is x? Left, right, or center?
+    # could be refactored using `x % 3` but I'll keep it as is for legibility
+    if x == 0 or x == 3 or x == 6:
+        pos[0] = LEFT
+    elif x == 1 or x == 4 or x == 7:
+        pos[0] = CENTRE
+    else:
+        pos[0] = RIGHT
+
+    # where is y?
+    if y == 0 or y == 3 or y == 6:
+        pos[1] = TOP
+    elif y == 1 or y == 4 or y == 7:
+        pos[1] = CENTRE
+    else:
+        pos[1] = BOTTOM
+
+    # Which values do we need to consider?
+    if pos[0] == LEFT:
+        xs = [x, x + 1, x + 2]
+    elif pos[0] == CENTRE:
+        xs = [x - 1, x, x + 1]
+    else:
+        xs = [x, x - 1, x - 2]
+
+    if pos[1] == TOP:
+        ys = [y, y + 1, y + 2]
+    elif pos[1] == CENTRE:
+        ys = [y - 1, y, y + 1]
+    else:
+        ys = [y, y - 1, y - 2]
+
+    for yn in ys:
+        for xn in xs:
+            if grid[yn][xn] == val:
+                return True
+    return False
 
 
-def possible_solution(x: int, y: int, val: int) -> bool:
+def possible_solution(grid: GameGrid, x: int, y: int, val: int) -> bool:
     """
     Would it violate the rules to place val in the cell at (x,y)?
     """
     if (
-        is_in_row_of(x, y, val)
-        or is_in_column_of(x, y, val)
-        or is_in_region_of(x, y, val)
+        is_in_row_of(grid, y, val)
+        or is_in_column_of(grid, x, val)
+        or is_in_region_of(grid, x, y, val)
     ):
         return False
 
@@ -36,7 +85,7 @@ def simple_solver(grid: GameGrid) -> None:
         for x in range(9):
             if grid[y][x] == 0:
                 for v in range(1, 10):
-                    if possible_solution(x, y, v):
+                    if possible_solution(grid, x, y, v):
                         grid[y][x] = v
                     simple_solver(grid)
                     return

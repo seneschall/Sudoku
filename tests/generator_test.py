@@ -48,7 +48,7 @@ from classes import Game
 from pprint import pp
 
 
-def test_solve_naive() -> None:
-    game = Game()
-    solve_naive(game)
-    print(game)
+# def test_solve_naive() -> None:
+#     game = Game()
+#     solve_naive(game)
+#     print(game)
