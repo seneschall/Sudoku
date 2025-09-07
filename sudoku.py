@@ -20,7 +20,7 @@ def is_in_column_of(grid: GameGrid, x: int, val: int) -> bool:
 
 
 def is_in_region_of(grid: GameGrid, x: int, y: int, val: int) -> bool:
-    # where in the region is x? Left, right, or center?
+    # where in the region is x? Left, right, or centre?
     # could be refactored using `x % 3` but I'll keep it as is for legibility
     if x == 0 or x == 3 or x == 6:  # i.e. is x in left field of region?
         xs = [x, x + 1, x + 2]
