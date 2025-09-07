@@ -1,14 +1,14 @@
-# from sudoku import simple_solver
 from sudoku import (
     is_in_column_of,
     is_in_region_of,
     is_in_row_of,
     make_game,
-    possible_solution,
+    is_possible_solution,
+    randomly_fill_diagonal,
 )
 
 
-def test_possible_solution() -> None:
+def test_is_possible_solution() -> None:
     grid: list[list[int]] = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 4, 0, 0, 0, 0, 0, 0, 0],
@@ -20,10 +20,10 @@ def test_possible_solution() -> None:
         [0, 0, 0, 0, 0, 0, 0, 8, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert possible_solution(grid, 0, 1, 4) is False
-    assert possible_solution(grid, 0, 1, 5) is False
-    assert possible_solution(grid, 0, 1, 1) is True
-    assert possible_solution(grid, 1, 3, 5) is True
+    assert is_possible_solution(grid, 0, 1, 4) is False
+    assert is_possible_solution(grid, 0, 1, 5) is False
+    assert is_possible_solution(grid, 0, 1, 1) is True
+    assert is_possible_solution(grid, 1, 3, 5) is True
 
 
 def test_is_in_region_of() -> None:
@@ -101,6 +101,62 @@ def test_make_game() -> None:
     assert count_zeros(game) == TOTAL_COUNT - 80
     game = make_game(0)
     assert count_zeros(game) == TOTAL_COUNT
+
+
+def test_randomly_fill_diagonal() -> None:
+    def region_is_empty(grid: list[list[int]], x: int, y: int) -> bool:
+        """
+        (x,y) is upper-left corner of region.
+        True if every field in region is set to 0.
+        """
+        for yn in range(y, y + 3):
+            for xn in range(x, x + 3):
+                if grid[yn][xn] != 0:
+                    return False
+        return True
+
+    def region_is_filled(grid: list[list[int]], x: int, y: int) -> bool:
+        """
+        (x,y) is upper-left corner of region.
+        True if no field in region is set to 0.
+        """
+        for yn in range(y, y + 3):
+            for xn in range(x, x + 3):
+                if grid[yn][xn] == 0:
+                    return False
+        return True
+
+    def test() -> None:
+        game: list[list[int]] = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ]
+        randomly_fill_diagonal(game)
+        assert (
+            region_is_filled(game, 0, 0)
+            and region_is_filled(game, 3, 3)
+            and region_is_filled(game, 6, 6)
+            and region_is_empty(game, 3, 0)
+            and region_is_empty(game, 6, 0)
+            and region_is_empty(game, 0, 3)
+            and region_is_empty(game, 6, 3)
+            and region_is_empty(game, 0, 6)
+            and region_is_empty(game, 3, 6)
+        )
+
+    test()
+    test()
+    test()
+    test()
+    test()
+    test()
 
 
 # def test_simple_solver() -> None:
