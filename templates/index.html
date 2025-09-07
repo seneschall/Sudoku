@@ -3,5 +3,19 @@
 {% block title %}Hello there{% endblock %}
 
 {% block body %}
-<h1>I hereby declare victory!</h1>
+<div class="container text-center">
+  <h1>Sudoku</h1>
+
+  <p><a href="/generate" class="btn btn-primary">Generate new game!</a></p>
+
+  <table>
+    {% for row in grid %}
+    <tr>
+      {% for field in row %}
+      <td>{% if field != 0 %}{{field}}{% else %}{%endif%}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+</div>
 {% endblock %}

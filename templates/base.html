@@ -6,7 +6,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>{% block title %}{% endblock %}</title>
-  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <style>
+    table {
+      border-collapse: collapse;
+      font-size: 20pt;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    td {
+      border: 1px solid;
+      width: 50px;
+      height: 50px;
+      text-align: center;
+    }
+
+    td:nth-child(3n) {
+      border-right-width: 2px;
+    }
+
+    tr:nth-child(3n) td {
+      border-bottom-width: 2px;
+    }
+
+    tr:last-child td {
+      border-bottom-width: 1px;
+    }
+
+    td:last-child {
+      border-right-width: 1px;
+    }
+  </style>
 </head>
 
 <body>
