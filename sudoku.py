@@ -5,6 +5,24 @@ from helpers import gen_coord
 type GameGrid = list[list[int]]
 
 
+class SudokuGame:
+    def __init__(self, hint_count: int = 20) -> None:
+        self.grid: GameGrid = make_game(hint_count)
+
+    def get_val_at(self, x: int, y: int) -> int:
+        return self.grid[y][x]
+
+    def regenerate(self, hint_count: int = 20) -> None:
+        self.grid = make_game(hint_count)
+
+    def get_possible_vals_at(self, x: int, y: int) -> list[int]:
+        result: list[int] = []
+        for val in range(1, 10):
+            if is_possible_solution(self.grid, x, y, val):
+                result.append(val)
+        return result
+
+
 def is_in_row_of(grid: GameGrid, y: int, val: int) -> bool:
     for i in range(9):
         if grid[y][i] == val:

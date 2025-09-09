@@ -9,25 +9,25 @@ from flask import (
     # Response,
 )
 
-from sudoku import make_game
+from sudoku import GameGrid, SudokuGame
 
 app = Flask(__name__)
 
-grid: list[list[int]] = []
+game: SudokuGame = SudokuGame()  # game-state is stored on server in "singleton"
 
 
 @app.route("/generate", methods=["GET", "POST"])
 def gen():
-    global grid
-    grid = make_game(20)
+    global game
+    game.regenerate()
     return redirect("/")
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    grid: GameGrid = game.grid
     return render_template("index.html", grid=grid)
 
 
 if __name__ == "__main__":
-    grid = make_game(20)
     app.run(debug=True)
