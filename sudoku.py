@@ -3,17 +3,38 @@ from random import randint
 from helpers import gen_coord
 
 type GameGrid = list[list[int]]
+type PossibleValGrid = list[list[list[int]]]
 
 
 class SudokuGame:
     def __init__(self, hint_count: int = 20) -> None:
         self.grid: GameGrid = make_game(hint_count)
+        self.possible_vals: PossibleValGrid = []
+        self.__update_possible_val_grid()
+
+    def __update_possible_val_grid(self):
+        new_possible_vals: PossibleValGrid = []
+        for y in range(9):
+            row_list: list[list[int]] = []
+            for x in range(9):
+                field_list: list[int] = []
+                for val in range(1, 10):
+                    if is_possible_solution(self.grid, x, y, val):
+                        field_list.append(val)
+                row_list.append(field_list)
+            new_possible_vals.append(row_list)
+        self.possible_vals = new_possible_vals
 
     def get_val_at(self, x: int, y: int) -> int:
         return self.grid[y][x]
 
     def regenerate(self, hint_count: int = 20) -> None:
         self.grid = make_game(hint_count)
+        self.__update_possible_val_grid()
+
+    def set_val_at(self, x: int, y: int, val: int) -> None:
+        self.grid[y][x] = val
+        self.__update_possible_val_grid()
 
     def get_possible_vals_at(self, x: int, y: int) -> list[int]:
         result: list[int] = []

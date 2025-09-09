@@ -1,0 +1,6 @@
+<select hx-swap="outerHTML" hx-post="/val_changed_at_{{x}}_{{y}}" hx-trigger="change" name="value" autofocus>
+  <option value=""></option>
+  {% for val in possible_vals %}
+  <option value="{{val}}">{{val}}</option>
+  {% endfor %}
+</select>
