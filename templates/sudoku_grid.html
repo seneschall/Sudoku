@@ -16,7 +16,9 @@
         {% else %}
           class = "valid-field"
         {% endif %}
-        name="value">
+        name="value"
+        autocomplete="off" {# this seems to fix an issue with bfcache in Firefox #}
+        >
           {% if game.is_empty_at(x, y) %}
           <option value="0" selected></option>
           {% for val in game.get_possible_vals_at(x,y) %}
