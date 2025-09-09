@@ -3,14 +3,25 @@ from random import randint
 from helpers import gen_coord
 
 type GameGrid = list[list[int]]
+type SettableByPlayerGrid = list[list[bool]]
 type PossibleValGrid = list[list[list[int]]]
 
 
 class SudokuGame:
     def __init__(self, hint_count: int = 20) -> None:
         self.grid: GameGrid = make_game(hint_count)
+        self.settable_by_player: SettableByPlayerGrid = (
+            self.__initialise_settable_by_player()
+        )
         self.possible_vals: PossibleValGrid = []
         self.__update_possible_val_grid()
+
+    def __initialise_settable_by_player(self) -> SettableByPlayerGrid:
+        result: SettableByPlayerGrid = []
+        for row in self.grid:
+            row_list: list[bool] = [val == 0 for val in row]
+            result.append(row_list)
+        return result
 
     def __update_possible_val_grid(self):
         new_possible_vals: PossibleValGrid = []
@@ -35,6 +46,12 @@ class SudokuGame:
     def set_val_at(self, x: int, y: int, val: int) -> None:
         self.grid[y][x] = val
         self.__update_possible_val_grid()
+
+    def player_settable(self, x, y) -> bool:
+        return self.settable_by_player[y][x]
+
+    def is_empty_at(self, x: int, y: int) -> bool:
+        return self.grid[y][x] == 0
 
     def get_possible_vals_at(self, x: int, y: int) -> list[int]:
         result: list[int] = []

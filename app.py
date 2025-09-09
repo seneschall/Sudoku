@@ -1,3 +1,4 @@
+from typing import Optional
 from flask import (
     Flask,
     redirect,
@@ -10,7 +11,8 @@ from flask import (
     # Response,
 )
 
-from sudoku import GameGrid, SudokuGame
+from exceptions import InvalidFieldValue
+from sudoku import GameGrid, SettableByPlayerGrid, SudokuGame
 
 app = Flask(__name__)
 
@@ -29,9 +31,10 @@ def gen():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    grid: GameGrid = game.grid
-    possible_vals = game.possible_vals
-    return render_template("index.html", grid=grid, possible_vals=possible_vals)
+    # grid: GameGrid = game.grid
+    # possible_vals = game.possible_vals
+    # settable_by_player: SettableByPlayerGrid = game.settable_by_player
+    return render_template("index.html", game=game)
 
 
 ## HTMX routes
@@ -45,6 +48,15 @@ def possible_at(x: int, y: int):
 def val_changed(x: int, y: int):
     val = request.form.get("value")
     return render_template_string("{{val}}", val=val)
+
+
+@app.route("/change_<int:x>_<int:y>", methods=["POST"])
+def change(x: int, y: int):
+    val: Optional[str] = request.form.get("value")
+    if val is None:
+        raise InvalidFieldValue(val)
+    game.set_val_at(x, y, int(val))
+    return render_template("sudoku_grid.html", game=game)
 
 
 if __name__ == "__main__":
