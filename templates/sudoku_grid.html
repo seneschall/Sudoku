@@ -12,9 +12,9 @@
         hx-target=".sudoku-grid"
         hx-swap="outerHTML"
         {% if game.get_possible_vals_at(x,y) == [] %}
-          class = "form-select invalid-field"
+          class = "invalid-field"
         {% else %}
-          class = "form-select valid-field"
+          class = "valid-field"
         {% endif %}
         name="value">
           {% if game.is_empty_at(x, y) %}
