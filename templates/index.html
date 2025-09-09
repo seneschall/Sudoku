@@ -8,32 +8,5 @@
 
   <p><a href="/generate" class="btn btn-primary">Generate new game!</a></p>
 
-  <table class="sudoku-grid">
-    {% for y in range(9) %}
-    <tr>
-      {% for x in range(9) %}
-      <td>{% if not game.player_settable(x, y) %}
-        {{ game.get_val_at(x, y) }}
-        {% else %}
-        <select hx-trigger="change" hx-post="/change_{{x}}_{{y}}" hx-target=".sudoku-grid">
-          {% if game.is_empty_at(x, y) %}
-          <option value="" selected></option>
-          {% for val in game.get_possible_vals_at(x,y) %}
-          <option value="{{ val }}">{{ val }}</option>
-          {% endfor %}
-          {% else %}
-          <option value=""></option>
-          {% for val in game.get_possible_vals_at(x,y) %}
-          <option value="{{ val }}" {% if val==game.get_val_at(x, y) %}selected{% endif %}>{{ val }}</option>
-          {% endfor %}
-
-          {% endif %}
-        </select>
-        {%endif%}
-      </td>
-      {% endfor %}
-    </tr>
-    {% endfor %}
-  </table>
-</div>
-{% endblock %}
+  {% include 'sudoku_grid.html' %}
+  {% endblock %}

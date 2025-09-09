@@ -10,18 +10,17 @@ type PossibleValGrid = list[list[list[int]]]
 class SudokuGame:
     def __init__(self, hint_count: int = 20) -> None:
         self.grid: GameGrid = make_game(hint_count)
-        self.settable_by_player: SettableByPlayerGrid = (
-            self.__initialise_settable_by_player()
-        )
+        self.settable_by_player: SettableByPlayerGrid = []
+        self.__update_settable_by_player()
         self.possible_vals: PossibleValGrid = []
         self.__update_possible_val_grid()
 
-    def __initialise_settable_by_player(self) -> SettableByPlayerGrid:
+    def __update_settable_by_player(self) -> None:
         result: SettableByPlayerGrid = []
         for row in self.grid:
             row_list: list[bool] = [val == 0 for val in row]
             result.append(row_list)
-        return result
+        self.settable_by_player = result
 
     def __update_possible_val_grid(self):
         new_possible_vals: PossibleValGrid = []
@@ -29,6 +28,9 @@ class SudokuGame:
             row_list: list[list[int]] = []
             for x in range(9):
                 field_list: list[int] = []
+                val: int = self.get_val_at(x, y)
+                if val != 0:
+                    field_list.append(val)
                 for val in range(1, 10):
                     if is_possible_solution(self.grid, x, y, val):
                         field_list.append(val)
@@ -42,6 +44,10 @@ class SudokuGame:
     def regenerate(self, hint_count: int = 20) -> None:
         self.grid = make_game(hint_count)
         self.__update_possible_val_grid()
+        self.__update_settable_by_player()
+        pp(f"self.grid = {self.grid}")
+        pp(f"self.possible_vals = {self.possible_vals}")
+        pp(f"self.settable_by_player = {self.settable_by_player}")
 
     def set_val_at(self, x: int, y: int, val: int) -> None:
         self.grid[y][x] = val
@@ -54,11 +60,7 @@ class SudokuGame:
         return self.grid[y][x] == 0
 
     def get_possible_vals_at(self, x: int, y: int) -> list[int]:
-        result: list[int] = []
-        for val in range(1, 10):
-            if is_possible_solution(self.grid, x, y, val):
-                result.append(val)
-        return result
+        return self.possible_vals[y][x]
 
 
 def is_in_row_of(grid: GameGrid, y: int, val: int) -> bool:
