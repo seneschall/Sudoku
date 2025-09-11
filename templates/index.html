@@ -7,6 +7,12 @@
   <div class="explainer">
     <h1>Sudoku</h1>
 
+    <p class="explainer-text">
+      Welcome to Sudoku Generator! If you want to play, click one of the empty
+      fields and select a number from the drop-down menu.<br>
+      If you want to empty a field, click the blank value from the list.
+    </p>
+
     <p><a href="{{ url_for('generate') }}" class="btn btn-primary">Generate new game!</a></p>
   </div>
   {% include 'sudoku_grid.html' %}

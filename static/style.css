@@ -54,3 +54,8 @@ td select {
     padding-top: 2em;
     padding-bottom: 1em;
 }
+
+.explainer-text {
+    margin-left: 20%;
+    margin-right: 20%;
+}
