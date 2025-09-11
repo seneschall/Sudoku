@@ -6,31 +6,32 @@
       {% if not game.player_settable(x, y) %}
       {{ game.get_val_at(x, y) }}
       {% else %}
-      <select
-        hx-trigger="change"
-        hx-post="/change_{{x}}_{{y}}"
-        hx-target=".sudoku-grid"
-        hx-swap="outerHTML"
-        {% if game.get_possible_vals_at(x,y) == [] %}
-          class = "invalid-field"
+      <select hx-trigger="change"
+              hx-post="{{ url_for('change', x=x, y=y) }}"
+              hx-target=".sudoku-grid"
+              hx-swap="outerHTML"
+              {% if game.get_possible_vals_at(x,y)==[] %}
+              class="invalid-field"
+              {% else %}
+              class="valid-field"
+              {% endif %}
+              name="value"
+              autocomplete="off" {# this seems to fix an issue with bfcache in Firefox #}>
+        {% if game.is_empty_at(x, y) %}
+        <option value="0" selected></option>
+        {% for val in game.get_possible_vals_at(x,y) %}
+        <option value="{{ val }}">{{ val }}</option>
+        {% endfor %}
         {% else %}
-          class = "valid-field"
-        {% endif %}
-        name="value"
-        autocomplete="off" {# this seems to fix an issue with bfcache in Firefox #}
-        >
-          {% if game.is_empty_at(x, y) %}
-          <option value="0" selected></option>
-          {% for val in game.get_possible_vals_at(x,y) %}
-          <option value="{{ val }}">{{ val }}</option>
-          {% endfor %}
-          {% else %}
-          <option value="0"></option>
-          {% for val in game.get_possible_vals_at(x,y) %}
-          <option value="{{ val }}" {% if val==game.get_val_at(x, y) %}selected{% endif %}>{{ val }}</option>
-          {% endfor %}
+        <option value="0"></option>
+        {% for val in game.get_possible_vals_at(x,y) %}
+        <option value="{{ val }}"
+                {% if val==game.get_val_at(x, y) %}
+                selected
+                {% endif %}>{{ val }}</option>
+        {% endfor %}
 
-          {% endif %}
+        {% endif %}
       </select>
       {%endif%}
     </td>

@@ -1,13 +1,22 @@
-from pprint import pp
 from random import randint
-from helpers import gen_coord
 
 type GameGrid = list[list[int]]
 type SettableByPlayerGrid = list[list[bool]]
 type PossibleValGrid = list[list[list[int]]]
+type Coordinate = tuple[int, int]
 
 
 class SudokuGame:
+    _instance = None  # Class-level variable to hold the single instance
+
+    def __new__(cls, *args, **kwargs):
+        """
+        Ensures, only a single instance of SudokuGame exists.
+        """
+        if cls._instance is None:
+            cls._instance = super(SudokuGame, cls).__new__(cls)
+        return cls._instance
+    
     def __init__(self, hint_count: int = 20) -> None:
         self.grid: GameGrid = make_game(hint_count)
         self.settable_by_player: SettableByPlayerGrid = []
@@ -22,7 +31,7 @@ class SudokuGame:
             result.append(row_list)
         self.settable_by_player = result
 
-    def __update_possible_val_grid(self):
+    def __update_possible_val_grid(self) -> None:
         new_possible_vals: PossibleValGrid = []
         for y in range(9):
             row_list: list[list[int]] = []
@@ -45,9 +54,6 @@ class SudokuGame:
         self.grid = make_game(hint_count)
         self.__update_possible_val_grid()
         self.__update_settable_by_player()
-        pp(f"self.grid = {self.grid}")
-        pp(f"self.possible_vals = {self.possible_vals}")
-        pp(f"self.settable_by_player = {self.settable_by_player}")
 
     def set_val_at(self, x: int, y: int, val: int) -> None:
         self.grid[y][x] = val
@@ -186,21 +192,8 @@ def make_game(clue_count: int) -> GameGrid:
     remove_vals(game, remove_count)
     return game
 
+def gen_coord() -> Coordinate:
+    x = randint(0, 8)
+    y = randint(0, 8)
+    return (x, y)
 
-if __name__ == "__main__":
-    game: list[list[int]] = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
-
-    # randomly_fill_diagonal(game)
-    # pp(game)
-    game = make_game(20)
-    pp(game)

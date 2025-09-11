@@ -1,29 +1,12 @@
-"""
-Running this script starts the server.
-"""
-
+from flask import current_app, render_template, redirect, request
 from typing import Optional
-from flask import (
-    Flask,
-    redirect,
-    render_template,
-    request,
-)
-
-from exceptions import InvalidFieldValue
-from sudoku import SudokuGame
-
-app = Flask(__name__)
-
-game: SudokuGame = SudokuGame()  # game-state is stored on server in "singleton"
-
-
-# routes
+from .exceptions import InvalidFieldValue
+from . import game
 
 
 ## general routes
-@app.route("/generate", methods=["GET", "POST"])
-def gen():
+@current_app.route("/generate", methods=["GET", "POST"])
+def generate():
     """
     Generates a new random sudoku game and redirects to `index()`.
     """
@@ -31,7 +14,7 @@ def gen():
     return redirect("/")
 
 
-@app.route("/", methods=["GET", "POST"])
+@current_app.route("/", methods=["GET", "POST"])
 def index():
     """
     Renders the sudoku game.
@@ -40,7 +23,7 @@ def index():
 
 
 ## HTMX routes
-@app.route("/change_<int:x>_<int:y>", methods=["POST"])
+@current_app.route("/change_<int:x>_<int:y>", methods=["POST"])
 def change(x: int, y: int):
     """
     Gets called by HTMX whenever a `select` field from the sudoku grid is changed.
@@ -49,10 +32,6 @@ def change(x: int, y: int):
     """
     val: Optional[str] = request.form.get("value")
     if val is None:
-        raise InvalidFieldValue(val)
+        raise InvalidFieldValue()
     game.set_val_at(x, y, int(val))
     return render_template("sudoku_grid.html", game=game)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
