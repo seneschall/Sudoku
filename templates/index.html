@@ -9,8 +9,10 @@
 
     <p class="explainer-text">
       Welcome to Sudoku Generator! If you want to play, click one of the empty
-      fields and select a number from the drop-down menu.<br>
+      fields and select a number from the drop-down menu.
       If you want to empty a field, click the blank value from the list.
+      If a field is coloured red, it means that there are no valid numbers for that field and
+      you might have to backtrack.
     </p>
 
     <p><a href="{{ url_for('generate') }}" class="btn btn-primary">Generate new game!</a></p>
