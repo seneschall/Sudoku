@@ -7,6 +7,12 @@ type Coordinate = tuple[int, int]
 
 
 class SudokuGame:
+    """
+    Stores a random sudoku game initialised with the given
+    `hint_count`, which fields are settable by the player,
+    and which values are valid for any given field.
+    """
+
     _instance = None  # Class-level variable to hold the single instance
 
     def __new__(cls, *args, **kwargs):
@@ -16,7 +22,7 @@ class SudokuGame:
         if cls._instance is None:
             cls._instance = super(SudokuGame, cls).__new__(cls)
         return cls._instance
-    
+
     def __init__(self, hint_count: int = 20) -> None:
         self.grid: GameGrid = make_game(hint_count)
         self.settable_by_player: SettableByPlayerGrid = []
@@ -51,25 +57,48 @@ class SudokuGame:
         return self.grid[y][x]
 
     def regenerate(self, hint_count: int = 20) -> None:
+        """
+        Generates a new `grid` and resets `settable_by_player`
+        and `possible_vals`.
+        """
         self.grid = make_game(hint_count)
         self.__update_possible_val_grid()
         self.__update_settable_by_player()
 
     def set_val_at(self, x: int, y: int, val: int) -> None:
+        """
+        Sets the value at coordinate `(x, y)` to `val` and
+        updates the possible values for all other fields in the same
+        row, column, or region.
+        """
         self.grid[y][x] = val
         self.__update_possible_val_grid()
 
     def player_settable(self, x, y) -> bool:
+        """
+        Returns whether or not the field at coordinate `(x, y)` is settable
+        by the player.
+        """
         return self.settable_by_player[y][x]
 
     def is_empty_at(self, x: int, y: int) -> bool:
+        """
+        Returns whether or not the field at coordinate `(x, y)` is empty.
+        """
         return self.grid[y][x] == 0
 
     def get_possible_vals_at(self, x: int, y: int) -> list[int]:
+        """
+        Returns a list of values the field at coordinate `(x, y)`
+        can be set to.
+        """
         return self.possible_vals[y][x]
 
 
 def is_in_row_of(grid: GameGrid, y: int, val: int) -> bool:
+    """
+    `True` if `val` can be found in row `y` of the `grid`.
+    """
     for i in range(9):
         if grid[y][i] == val:
             return True
@@ -77,6 +106,9 @@ def is_in_row_of(grid: GameGrid, y: int, val: int) -> bool:
 
 
 def is_in_column_of(grid: GameGrid, x: int, val: int) -> bool:
+    """
+    `True` if `val` can be found in column `x` of the `grid`.
+    """
     for i in range(9):
         if grid[i][x] == val:
             return True
@@ -84,6 +116,11 @@ def is_in_column_of(grid: GameGrid, x: int, val: int) -> bool:
 
 
 def is_in_region_of(grid: GameGrid, x: int, y: int, val: int) -> bool:
+    """
+    `True` if `val` can be found in the region of the `grid` the
+    field `(x, y)` is in. It doesn't matter where in the region `(x, y)`
+    is.
+    """
     # where in the region is x? Left, right, or centre?
     # could be refactored using `x % 3` but I'll keep it as is for legibility
     if x == 0 or x == 3 or x == 6:  # i.e. is x in left field of region?
@@ -124,6 +161,11 @@ def is_possible_solution(grid: GameGrid, x: int, y: int, val: int) -> bool:
 
 
 def simple_solver(grid: GameGrid) -> bool:
+    """
+    Brute-force sudoku-solver that updates the passed
+    `GameGrid` in-place and returns `True` if the current recursion path resulted in a valid,
+    completely solved game.
+    """
     for y in range(9):
         for x in range(9):
             if grid[y][x] == 0:
@@ -192,8 +234,11 @@ def make_game(clue_count: int) -> GameGrid:
     remove_vals(game, remove_count)
     return game
 
+
 def gen_coord() -> Coordinate:
+    """
+    Generates a random coordinate for a `GameGrid`.
+    """
     x = randint(0, 8)
     y = randint(0, 8)
     return (x, y)
-
