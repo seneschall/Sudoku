@@ -1,4 +1,4 @@
-from sudoku import (
+from app.sudoku import (
     is_in_column_of,
     is_in_region_of,
     is_in_row_of,
