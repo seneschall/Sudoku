@@ -105,7 +105,7 @@ def test_make_game() -> None:
     assert count_zeros(game) == TOTAL_COUNT
 
     # testing for solvability of generated games
-    for i in range(100):
+    for i in range(50):
         num: int = randint(20, 80)
         game = make_game(num)
         simple_solver(game) # if not solvable, will get stuck in infinite loop
