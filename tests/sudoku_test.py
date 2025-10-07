@@ -1,3 +1,4 @@
+from random import randint
 from app.sudoku import (
     is_in_column_of,
     is_in_region_of,
@@ -5,6 +6,7 @@ from app.sudoku import (
     make_game,
     is_possible_solution,
     randomly_fill_diagonal,
+    simple_solver
 )
 
 
@@ -101,6 +103,12 @@ def test_make_game() -> None:
     assert count_zeros(game) == TOTAL_COUNT - 80
     game = make_game(0)
     assert count_zeros(game) == TOTAL_COUNT
+
+    # testing for solvability of generated games
+    for i in range(100):
+        num: int = randint(20, 80)
+        game = make_game(num)
+        simple_solver(game) # if not solvable, will get stuck in infinite loop
 
 
 def test_randomly_fill_diagonal() -> None:
